@@ -11,4 +11,4 @@ forward(200)
 left(90)
 forward(300)
 
-# root.mainloop()
+root.mainloop()
