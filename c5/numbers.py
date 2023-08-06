@@ -7,6 +7,7 @@ dots = []
 lines = []
 number_of_dots = 3
 next_dot = 0
+game_over = False
 
 def next_level():
     global dots, lines, next_dot, number_of_dots
@@ -20,6 +21,10 @@ def next_level():
         dots.append(actor)
 
 def draw():
+    if game_over == True:
+        screen.fill("pink")
+        screen.draw.text("GameOver", center=(200, 200), fontsize = 60, color="#802020")
+        return
     screen.fill("black")
     number = 1
     for dot in dots:
@@ -34,6 +39,7 @@ def on_mouse_down(pos):
     global number_of_dots
     global next_dot
     global lines
+    global game_over
     if dots[next_dot].collidepoint(pos):
         if next_dot:
             lines.append((dots[next_dot -1].pos, dots[next_dot].pos))
@@ -42,7 +48,8 @@ def on_mouse_down(pos):
             number_of_dots += 2
             next_level()
     else:
-        lines = []
-        next_dot = 0
+        game_over = True
+        # lines = []
+        # next_dot = 0
 
 next_level()
