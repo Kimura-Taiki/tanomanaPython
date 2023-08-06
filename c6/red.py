@@ -29,9 +29,14 @@ def draw():
             star.draw()
 
 def update():
-    global stars
+    global stars, game_complete, game_over, current_level
     if len(stars) == 0:
         stars = make_stars(current_level)
+    if (game_complete or game_over) and keyboard.space:
+        stars = []
+        current_level = 1
+        game_complete = False
+        game_over = False
 
 def make_stars(number_of_extra_stars):
     colours_to_create = get_colours_to_create(number_of_extra_stars)
