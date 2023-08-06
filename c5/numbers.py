@@ -25,3 +25,14 @@ def draw():
     for line in lines:
         screen.draw.line(line[0], line[1], (100, 0, 0))
 
+def on_mouse_down(pos):
+    pass
+    global next_dot
+    global lines
+    if dots[next_dot].collidepoint(pos):
+        if next_dot:
+            lines.append((dots[next_dot -1].pos, dots[next_dot].pos))
+        next_dot += 1
+    else:
+        lines = []
+        next_dot = 0
