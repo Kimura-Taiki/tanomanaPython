@@ -10,11 +10,14 @@ FINAL_LEVEL = 6
 START_SPEED = 10
 COLOURS = ["green", "blue"]
 
-game_over = False
-game_complete = False
-current_level = 1
-stars = []
-animations = []
+
+def replay():
+    global game_over, game_complete, current_level, stars, animations
+    game_over = False
+    game_complete = False
+    current_level = 1
+    stars = []
+    animations = []
 
 def draw():
     global stars, current_level, game_over, game_complete
@@ -33,10 +36,7 @@ def update():
     if len(stars) == 0:
         stars = make_stars(current_level)
     if (game_complete or game_over) and keyboard.space:
-        stars = []
-        current_level = 1
-        game_complete = False
-        game_over = False
+        replay()
 
 def make_stars(number_of_extra_stars):
     colours_to_create = get_colours_to_create(number_of_extra_stars)
@@ -66,7 +66,6 @@ def layout_stars(stars_to_layout):
     for index, star in enumerate(stars_to_layout):
         new_x_pos = (index + 1) * gap_size
         star.x = new_x_pos
-        # star.y = 0
         if index % 2 == 0:
             star.y = 0
         else:
@@ -78,7 +77,6 @@ def animate_stars(stars_to_animate):
         random_speed_adjustment = random.randint(0, 2)
         duration = START_SPEED - current_level + random_speed_adjustment
         star.anchor = ("center", "bottom")
-        # animation = animate(star, duration=duration, on_finished=handle_game_over, y=HEIGHT)
         if index % 2 == 0:
             animation = animate(star, duration=duration, on_finished=handle_game_over, y=HEIGHT)
         else:
@@ -119,3 +117,19 @@ def display_message(heading_text, sub_heading_text):
                      fontsize=30,
                      center=(CENTRE_X, CENTRE_Y + 30),
                      color=FONT_COLOUR)
+    
+def shuffle():
+    global stars
+    if stars:
+        x_values = [star.x for star in stars]
+        random.shuffle(x_values)
+        for index, star in enumerate(stars):
+            new_x = x_values[index]
+            animation = animate(star, duration=0.5, x=new_x)
+            animations.append(animation)
+    
+# 初期定義
+replay()
+
+# 定時発動
+clock.schedule_interval(shuffle, 1.0)
