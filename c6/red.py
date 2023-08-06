@@ -41,10 +41,18 @@ def make_stars(number_of_extra_stars):
     return new_stars
 
 def get_colours_to_create(number_of_extra_stars):
-    return []
+    colours_to_create = ["red"]
+    for i in range(0, number_of_extra_stars):
+        random_colour = random.choice(COLOURS)
+        colours_to_create.append(random_colour)
+    return colours_to_create
 
 def create_stars(colours_to_create):
-    return []
+    new_stars = []
+    for colour in colours_to_create:
+        star = Actor(colour + "-star")
+        new_stars.append(star)
+    return new_stars
 
 def layout_stars(stars_to_layout):
     pass
