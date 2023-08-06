@@ -61,13 +61,23 @@ def layout_stars(stars_to_layout):
     for index, star in enumerate(stars_to_layout):
         new_x_pos = (index + 1) * gap_size
         star.x = new_x_pos
+        # star.y = 0
+        if index % 2 == 0:
+            star.y = 0
+        else:
+            star.y = HEIGHT
 
 def animate_stars(stars_to_animate):
     global animations
-    for star in stars_to_animate:
-        duration = START_SPEED - current_level
+    for index, star in enumerate(stars_to_animate):
+        random_speed_adjustment = random.randint(0, 2)
+        duration = START_SPEED - current_level + random_speed_adjustment
         star.anchor = ("center", "bottom")
-        animation = animate(star, duration=duration, on_finished=handle_game_over, y=HEIGHT)
+        # animation = animate(star, duration=duration, on_finished=handle_game_over, y=HEIGHT)
+        if index % 2 == 0:
+            animation = animate(star, duration=duration, on_finished=handle_game_over, y=HEIGHT)
+        else:
+            animation = animate(star, duration=duration, on_finished=handle_game_over, y=0)
         animations.append(animation)
 
 def handle_game_over():
