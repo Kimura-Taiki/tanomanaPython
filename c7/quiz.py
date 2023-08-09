@@ -79,4 +79,12 @@ def update_time_left():
     else:
         game_over()
 
+def on_key_up(key):
+    global score
+    if key == keys.H:
+        print("The correct answer is box number %s " % question[5])
+    if key == keys.SPACE:
+        score -= 1
+        correct_answer()
+
 clock.schedule_interval(update_time_left, 1.0)
