@@ -24,14 +24,17 @@ class Enemy(Actor):
 
     def repos(self):
         self.pos = randint(800, 1600), randint(self.top_y, self.bottom_y)
+        self.avoided = False
 
     def move(self):
         global score
         if self.right < 0:
             self.repos()
-            score += 1
         else:
             self.move_detail()
+        if (self.avoided == False) and (self.right < 400):
+            score += 1
+            self.avoided = True
     
     def move_detail(self):
         self.x -= 2
@@ -79,9 +82,6 @@ for i in range(0,lives):
     heart = Actor("mini_heart")
     heart.pos = i*64+32, 24
     hearts.append(heart)
-
-print("Heartsは")
-print(hearts)
 
 scores = []
 
