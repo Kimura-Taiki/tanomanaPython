@@ -25,10 +25,30 @@ number_of_updates = 0
 scores = []
 
 def update_high_scores():
-    pass
+    global score, scores
+    filename = r"/Users/kimurafutoshiki/Desktop/Python集/たのまなPython図鑑/c8/high-scores.txt"
+    scores = []
+    with open(filename, "r") as file:
+        line = file.readline()
+        high_scores = line.split()
+    for high_score in high_scores:
+        if (score > int(high_score)):
+            scores.append(str(score) + " ")
+            score = int(high_score)
+        else:
+            scores.append(str(high_score) + " ")
+    with open(filename, "w") as file:
+        for high_score in scores:
+            file.write(high_score)
 
 def display_high_socres():
-    pass
+    screen.draw.text("HIGH SCORES", (350, 150), color="black")
+    y = 175
+    position = 1
+    for high_score in scores:
+        screen.draw.text(str(position) + ". " + high_score, (350, y), color="black")
+        y += 25
+        position += 1
 
 def draw():
     screen.blit("background", (0, 0))
