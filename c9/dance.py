@@ -13,8 +13,12 @@ current_move = 0
 count = 4
 dance_length = 4
 
-say_dance = False
+# 1. 最初のgenerate_movesでshow_countdownはTrue、say_danceはFalseとされる。
+#   show_countdown中はcountdownが定期発動する。
 show_countdown = True
+# 2. countdownが終わると、show_countdownはFalseとされる。
+#   と同時にdisplay_movesが起動してsay_danceはTrueとされる。
+say_dance = False
 moves_complete = False
 game_over = False
 
@@ -77,16 +81,6 @@ def reset_dancer():
             button.image = button.btn
     return
 
-def update_dancer(move):
-    global game_over
-    if not game_over:
-        for i, button in enumerate(buttons):
-            if move != i:
-                continue
-            button.light_up()
-            break
-    return
-
 def display_moves():
     global move_list, display_list, dance_length
     global say_dance, show_countdown, current_move
@@ -96,7 +90,7 @@ def display_moves():
         for i, button in enumerate(buttons):
             if this_move != i:
                 continue
-            update_dancer(i)
+            button.light_up()
             clock.schedule(display_moves, 1)
             break
     else:
@@ -110,10 +104,8 @@ def generate_moves():
     count = 4
     move_list = []
     say_dance = False
-    print("リスト")
     for move in range(0, dance_length):
         rand_move = randint(0, len(buttons) - 1)
-        print("  "+str(rand_move))
         move_list.append(rand_move)
         display_list.append(rand_move)
     show_countdown = True
@@ -143,7 +135,7 @@ def on_key_up(key):
     for i, button in enumerate(buttons):
         if key != button.key:
             continue
-        update_dancer(i)
+        button.light_up()
         if move_list[current_move] == i:
             score += 1
             next_move()
@@ -151,9 +143,6 @@ def on_key_up(key):
         else:
             game_over = True
     return
-
-generate_moves()
-music.play("vanishing-horizon")
 
 def update():
     global game_over, current_move, moves_complete
@@ -164,3 +153,6 @@ def update():
             current_move = 0
     else:
         music.stop()
+
+generate_moves()
+music.play("vanishing-horizon")
