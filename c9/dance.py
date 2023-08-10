@@ -92,18 +92,12 @@ def display_moves():
     if display_list:
         this_move = display_list[0]
         display_list = display_list[1:]
-        if this_move == 0:
-            update_dancer(0)
+        for i, button in enumerate(buttons):
+            if this_move != i:
+                continue
+            update_dancer(i)
             clock.schedule(display_moves, 1)
-        elif this_move == 1:
-            update_dancer(1)
-            clock.schedule(display_moves, 1)
-        elif this_move == 2:
-            update_dancer(2)
-            clock.schedule(display_moves, 1)
-        elif this_move == 3:
-            update_dancer(3)
-            clock.schedule(display_moves, 1)
+            break
     else:
         say_dance = True
         show_countdown = False
