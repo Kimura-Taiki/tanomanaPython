@@ -22,10 +22,11 @@ dancer = Actor("dancer-start")
 dancer.pos = CENTRE_X + 5, CENTRE_Y - 40
 
 class Button(Actor):
-    def __init__(self, btn, x, y):
+    def __init__(self, btn, x, y, key):
         super().__init__(image=btn)
         self.btn = btn
         self.pos = CENTRE_X + x, CENTRE_Y + y
+        self.key = key
     
     def light_up(self):
         global dancer
@@ -33,20 +34,11 @@ class Button(Actor):
         dancer.image = "dancer-" + self.btn
         clock.schedule(reset_dancer, 0.5)
 
-up =    Button(btn="up",    x=0,    y=100)
-right = Button(btn="right", x=60,   y=170)
-down =  Button(btn="down",  x=0,    y=230)
-left =  Button(btn="left",  x=-60,  y=170)
+up =    Button(btn="up",    x=0,    y=100,  key=keys.UP)
+right = Button(btn="right", x=60,   y=170,  key=keys.RIGHT)
+down =  Button(btn="down",  x=0,    y=230,  key=keys.DOWN)
+left =  Button(btn="left",  x=-60,  y=170,  key=keys.LEFT)
 buttons = [up, right, down, left]
-
-# up = Actor("up")
-# up.pos = CENTRE_X, CENTRE_Y + 100
-# right = Actor("right")
-# right.pos = CENTRE_X + 60, CENTRE_Y + 170
-# down = Actor("down")
-# down.pos = CENTRE_X, CENTRE_Y + 230
-# left = Actor("left")
-# left.pos = CENTRE_X - 60, CENTRE_Y + 170
 
 def draw():
     global game_over, score, say_dance
@@ -80,31 +72,13 @@ def reset_dancer():
     global game_over
     if not game_over:
         dancer.image = "dancer-start"
-        up.image = "up"
-        right.image = "right"
-        down.image = "down"
-        left.image = "left"
+        for button in buttons:
+            button.image = button.btn
     return
 
 def update_dancer(move):
     global game_over
     if not game_over:
-        # if move == 0:
-        #     up.image = "up-lit"
-        #     dancer.image = "dancer-up"
-        #     clock.schedule(reset_dancer, 0.5)
-        # elif move == 1:
-        #     right.image = "right-lit"
-        #     dancer.image = "dancer-right"
-        #     clock.schedule(reset_dancer, 0.5)
-        # elif move == 2:
-        #     down.image = "down-lit"
-        #     dancer.image = "dancer-down"
-        #     clock.schedule(reset_dancer, 0.5)
-        # elif move == 3:
-        #     left.image = "left-lit"
-        #     dancer.image = "dancer-left"
-        #     clock.schedule(reset_dancer, 0.5)
         for i, button in enumerate(buttons):
             if move != i:
                 continue
@@ -169,32 +143,14 @@ def next_move():
 
 def on_key_up(key):
     global score, game_over, move_list, current_move
-    if key == keys.UP:
-        update_dancer(0)
-        if move_list[current_move] == 0:
+    for i, button in enumerate(buttons):
+        if key != button.key:
+            continue
+        update_dancer(i)
+        if move_list[current_move] == i:
             score += 1
             next_move()
-        else:
-            game_over = True
-    elif key == keys.RIGHT:
-        update_dancer(1)
-        if move_list[current_move] == 1:
-            score += 1
-            next_move()
-        else:
-            game_over = True
-    elif key == keys.DOWN:
-        update_dancer(2)
-        if move_list[current_move] == 2:
-            score += 1
-            next_move()
-        else:
-            game_over = True
-    elif key == keys.LEFT:
-        update_dancer(3)
-        if move_list[current_move] == 3:
-            score += 1
-            next_move()
+            break
         else:
             game_over = True
     return
