@@ -21,14 +21,32 @@ game_over = False
 dancer = Actor("dancer-start")
 dancer.pos = CENTRE_X + 5, CENTRE_Y - 40
 
-up = Actor("up")
-up.pos = CENTRE_X, CENTRE_Y + 100
-right = Actor("right")
-right.pos = CENTRE_X + 60, CENTRE_Y + 170
-down = Actor("down")
-down.pos = CENTRE_X, CENTRE_Y + 230
-left = Actor("left")
-left.pos = CENTRE_X - 60, CENTRE_Y + 170
+class Button(Actor):
+    def __init__(self, btn, x, y):
+        super().__init__(image=btn)
+        self.btn = btn
+        self.pos = CENTRE_X + x, CENTRE_Y + y
+    
+    def light_up(self):
+        global dancer
+        self.image = self.btn + "-lit"
+        dancer.image = "dancer-" + self.btn
+        clock.schedule(reset_dancer, 0.5)
+
+up =    Button(btn="up",    x=0,    y=100)
+right = Button(btn="right", x=60,   y=170)
+down =  Button(btn="down",  x=0,    y=230)
+left =  Button(btn="left",  x=-60,  y=170)
+buttons = [up, right, down, left]
+
+# up = Actor("up")
+# up.pos = CENTRE_X, CENTRE_Y + 100
+# right = Actor("right")
+# right.pos = CENTRE_X + 60, CENTRE_Y + 170
+# down = Actor("down")
+# down.pos = CENTRE_X, CENTRE_Y + 230
+# left = Actor("left")
+# left.pos = CENTRE_X - 60, CENTRE_Y + 170
 
 def draw():
     global game_over, score, say_dance
@@ -37,10 +55,8 @@ def draw():
         screen.clear()
         screen.blit("stage", (0, 0))
         dancer.draw()
-        up.draw()
-        down.draw()
-        right.draw()
-        left.draw()
+        for button in buttons:
+            button.draw()
         screen.draw.text("Score: " +
                          str(score), color="black",
                          topleft=(10, 10))
