@@ -139,21 +139,54 @@ def countdown():
     return
 
 def next_move():
-    pass
+    global dance_length, current_move, moves_complete
+    if current_move < dance_length - 1:
+        current_move += 1
+    else:
+        moves_complete = True
+    return
 
 def on_key_up(key):
     global score, game_over, move_list, current_move
     if key == keys.UP:
         update_dancer(0)
+        if move_list[current_move] == 0:
+            score += 1
+            next_move()
+        else:
+            game_over = True
     elif key == keys.RIGHT:
         update_dancer(1)
+        if move_list[current_move] == 1:
+            score += 1
+            next_move()
+        else:
+            game_over = True
     elif key == keys.DOWN:
         update_dancer(2)
+        if move_list[current_move] == 2:
+            score += 1
+            next_move()
+        else:
+            game_over = True
     elif key == keys.LEFT:
         update_dancer(3)
+        if move_list[current_move] == 3:
+            score += 1
+            next_move()
+        else:
+            game_over = True
     return
 
 generate_moves()
+music.play("vanishing-horizon")
 
 def update():
-    pass
+    global game_over, current_move, moves_complete
+    if not game_over:
+        if moves_complete:
+            generate_moves()
+            moves_complete = False
+            current_move = 0
+    else:
+        music.stop()
