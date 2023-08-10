@@ -26,6 +26,9 @@ class Enemy(Actor):
         self.pos = randint(800, 1600), randint(self.top_y, self.bottom_y)
         self.avoided = False
 
+    def appear_shift(self, x):
+        self.x += x
+
     def move(self):
         global score
         if self.right < 0:
@@ -66,10 +69,16 @@ class EnemyBird(Enemy):
 balloon = Actor("balloon")
 balloon.pos = 400, 300
 
-bird = EnemyBird("bird-up", 10, 200)
-house = Enemy("house", 460, damage=2)
-tree = Enemy("tree", 450)
-enemies = [bird, house, tree]
+bird1 = EnemyBird("bird-up", 10, 200)
+bird2 = EnemyBird("bird-up", 10, 200)
+bird2.appear_shift(x=400)
+house1 = Enemy("house", 460, damage=2)
+house2 = Enemy("house", 460, damage=2)
+house2.appear_shift(x=400)
+tree1 = Enemy("tree", 450)
+tree2 = Enemy("tree", 450)
+tree2.appear_shift(x=400)
+enemies = [bird1, house1, tree1, bird2, house2, tree2]
 
 
 up = False
