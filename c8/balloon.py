@@ -5,7 +5,7 @@ WIDTH = 800
 HEIGHT = 600
 
 class Enemy(Actor):
-    def __init__(self, image, top_y, bottom_y=-1, damage=1):
+    def __init__(self, image, top_y, bottom_y=-1, damage=1, shift_x=0):
         super().__init__(image=image)
         self.top_y = top_y
         if bottom_y == -1:
@@ -14,6 +14,7 @@ class Enemy(Actor):
             self.bottom_y = bottom_y
         self.damage = damage
         self.repos()
+        self.x += shift_x
     
     def hitten(self,damage=1):
         global balloon
@@ -40,16 +41,19 @@ class Enemy(Actor):
             self.avoided = True
     
     def move_detail(self):
-        self.x -= 2
+        self.x -= Enemy.speed(2)
+
+    def speed(default):
+        return int(default * (int(score / 5) + 4) / 4)
 
 class EnemyBird(Enemy):
-    def __init__(self, image, top_y, bottom_y=-1, damage=1):
-        super().__init__(image, top_y, bottom_y, damage)
+    def __init__(self, image, top_y, bottom_y=-1, damage=1, shift_x=0):
+        super().__init__(image, top_y, bottom_y, damage, shift_x)
         self.number_of_updates = 0
         self.bird_up = True
     
     def move_detail(self):
-        self.x -= 4
+        self.x -= Enemy.speed(4)
         if self.number_of_updates == 9:
             self.flap()
             self.number_of_updates = 0
@@ -69,17 +73,13 @@ class EnemyBird(Enemy):
 balloon = Actor("balloon")
 balloon.pos = 400, 300
 
-bird1 = EnemyBird("bird-up", 10, 200)
-bird2 = EnemyBird("bird-up", 10, 200)
-bird2.appear_shift(x=400)
-house1 = Enemy("house", 460, damage=2)
-house2 = Enemy("house", 460, damage=2)
-house2.appear_shift(x=400)
-tree1 = Enemy("tree", 450)
-tree2 = Enemy("tree", 450)
-tree2.appear_shift(x=400)
-enemies = [bird1, house1, tree1, bird2, house2, tree2]
-
+enemies = []
+enemies.append(EnemyBird("bird-up", 10, 200))
+enemies.append(EnemyBird("bird-up", 10, 200, shift_x=400))
+enemies.append(Enemy("house", 460, damage=2))
+enemies.append(Enemy("house", 460, damage=2, shift_x=400))
+enemies.append(Enemy("tree", 450))
+enemies.append(Enemy("tree", 450, shift_x=400))
 
 up = False
 game_over = False
