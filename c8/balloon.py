@@ -5,39 +5,73 @@ WIDTH = 800
 HEIGHT = 600
 
 class Enemy(Actor):
-    def __init__(self, image, top_y, bottom_y):
+    def __init__(self, image, top_y, bottom_y=-1, damage=1):
         super().__init__(image=image)
         self.top_y = top_y
-        self.bottom_y = bottom_y
+        if bottom_y == -1:
+            self.bottom_y = self.top_y
+        else:
+            self.bottom_y = bottom_y
+        self.damage = damage
         self.repos()
     
-    def hitten(self):
+    def hitten(self,damage=1):
         global balloon
         if balloon.collidepoint(self.x, self.y) == False:
             return
         self.repos()
-        damaged_ballon()
+        damaged_ballon(self.damage)
 
     def repos(self):
         self.pos = randint(800, 1600), randint(self.top_y, self.bottom_y)
 
+    def move(self):
+        global score
+        if self.right < 0:
+            self.repos()
+            score += 1
+        else:
+            self.move_detail()
+    
+    def move_detail(self):
+        self.x -= 2
+
+class EnemyBird(Enemy):
+    def __init__(self, image, top_y, bottom_y=-1, damage=1):
+        super().__init__(image, top_y, bottom_y, damage)
+        self.number_of_updates = 0
+        self.bird_up = True
+    
+    def move_detail(self):
+        self.x -= 4
+        if self.number_of_updates == 9:
+            self.flap()
+            self.number_of_updates = 0
+        else:
+            self.number_of_updates += 1
+    
+    def flap(self):
+        if self.bird_up:
+            self.image = "bird-down"
+            self.bird_up = False
+        else:
+            self.image = "bird-up"
+            self.bird_up = True
+
+
+
 balloon = Actor("balloon")
 balloon.pos = 400, 300
 
-bird = Enemy("bird-up", 10, 200)
-
-house = Actor("house")
-house.pos = randint(800, 1600), 460
-
-tree = Actor("tree")
-tree.pos = randint(800, 1600), 450
+bird = EnemyBird("bird-up", 10, 200)
+house = Enemy("house", 460, damage=2)
+tree = Enemy("tree", 450)
+enemies = [bird, house, tree]
 
 
-bird_up = True
 up = False
 game_over = False
 score = 0
-number_of_updates = 0
 
 lives = 3
 hearts = []
@@ -84,9 +118,8 @@ def draw():
         for heart in hearts:
             heart.draw()
         balloon.draw()
-        bird.draw()
-        house.draw()
-        tree.draw()
+        for enemy in enemies:
+            enemy.draw()
         screen.draw.text("Score: " + str(score), (700, 5), color="black")
     else:
         display_high_socres()
@@ -100,60 +133,22 @@ def on_mouse_up():
     global up
     up = False
 
-def flap():
-    global bird_up
-    if bird_up:
-        bird.image = "bird-down"
-        bird_up = False
-    else:
-        bird.image = "bird-up"
-        bird_up = True
-
 def update():
     global game_over, score, number_of_updates
     if not game_over:
         if not up:
             balloon.y += 1
-
-    if bird.x > 0:
-        bird.x -= 4
-        if number_of_updates == 9:
-            flap()
-            number_of_updates = 0
-        else:
-            number_of_updates += 1
-    else:
-        bird.x = randint(800, 1600)
-        bird.y = randint(10, 200)
-        score += 1
-        number_of_updates = 0
-
-    if house.right > 0:
-        house.x -= 2
-    else:
-        house.x = randint(800, 1600)
-        score += 1
-
-    if tree.right > 0:
-        tree.x -= 2
-    else:
-        tree.x = randint(800, 1600)
-        score += 1
-
+    
     if balloon.top < 0 or balloon.bottom > 560:
-        game_over = True
-        update_high_scores()
+        damaged_ballon(damage=99)
 
-    if balloon.collidepoint(house.x, house.y) or \
-       balloon.collidepoint(tree.x, tree.y):
-        game_over = True
-        update_high_scores()
-
-    bird.hitten()
+    for enemy in enemies:
+        enemy.move()
+        enemy.hitten()
 
 def damaged_ballon(damage=1):
     global lives, game_over
-    for i in range(lives - damage, lives):
+    for i in reversed(range(lives - damage, lives)):
         if i < 0:
             break
         del hearts[i]
