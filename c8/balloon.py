@@ -16,11 +16,22 @@ house.pos = randint(800, 1600), 460
 tree = Actor("tree")
 tree.pos = randint(800, 1600), 450
 
+
 bird_up = True
 up = False
 game_over = False
 score = 0
 number_of_updates = 0
+
+lives = 3
+hearts = []
+for i in range(0,lives):
+    heart = Actor("mini_heart")
+    heart.pos = i*64+32, 24
+    hearts.append(heart)
+
+print("Heartsは")
+print(hearts)
 
 scores = []
 
@@ -51,8 +62,11 @@ def display_high_socres():
         position += 1
 
 def draw():
+    global lives
     screen.blit("background", (0, 0))
     if not game_over:
+        for heart in hearts:
+            heart.draw()
         balloon.draw()
         bird.draw()
         house.draw()
@@ -114,8 +128,25 @@ def update():
         game_over = True
         update_high_scores()
 
-    if balloon.collidepoint(bird.x, bird.y) or \
-       balloon.collidepoint(house.x, house.y) or \
+    # if balloon.collidepoint(bird.x, bird.y) or \
+    if balloon.collidepoint(house.x, house.y) or \
        balloon.collidepoint(tree.x, tree.y):
+        game_over = True
+        update_high_scores()
+        # damaged_ballon()
+
+    if balloon.collidepoint(bird.x, bird.y):
+        damaged_ballon()
+        bird.x = randint(800, 1600)
+        bird.y = randint(10, 200)
+
+def damaged_ballon(damage=1):
+    global lives, game_over
+    for i in range(lives - damage, lives):
+        if i < 0:
+            break
+        del hearts[i]
+    lives -= damage
+    if lives <= 0:
         game_over = True
         update_high_scores()
