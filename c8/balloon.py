@@ -87,6 +87,7 @@ scores = []
 
 def update_high_scores():
     global score, scores
+    new_high_score = False
     filename = r"/Users/kimurafutoshiki/Desktop/Python集/たのまなPython図鑑/c8/high-scores.txt"
     scores = []
     with open(filename, "r") as file:
@@ -96,8 +97,11 @@ def update_high_scores():
         if (score > int(high_score)):
             scores.append(str(score) + " ")
             score = int(high_score)
+            new_high_score = True
         else:
             scores.append(str(high_score) + " ")
+    if new_high_score == False:
+        return
     with open(filename, "w") as file:
         for high_score in scores:
             file.write(high_score)
