@@ -38,7 +38,8 @@ up =    Button(btn="up",    x=0,    y=100,  key=keys.UP)
 right = Button(btn="right", x=60,   y=170,  key=keys.RIGHT)
 down =  Button(btn="down",  x=0,    y=230,  key=keys.DOWN)
 left =  Button(btn="left",  x=-60,  y=170,  key=keys.LEFT)
-buttons = [up, right, down, left]
+enter = Button(btn="enter", x=0,    y=170,  key=keys.RETURN)
+buttons = [up, right, down, left, enter]
 
 def draw():
     global game_over, score, say_dance
@@ -105,12 +106,14 @@ def display_moves():
 
 def generate_moves():
     global move_list, dance_length, count
-    global show_countdown, say_dance
+    global show_countdown, say_dance, buttons
     count = 4
     move_list = []
     say_dance = False
+    print("リスト")
     for move in range(0, dance_length):
-        rand_move = randint(0, 3)
+        rand_move = randint(0, len(buttons) - 1)
+        print("  "+str(rand_move))
         move_list.append(rand_move)
         display_list.append(rand_move)
     show_countdown = True
