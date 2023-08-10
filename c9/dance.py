@@ -89,22 +89,27 @@ def reset_dancer():
 def update_dancer(move):
     global game_over
     if not game_over:
-        if move == 0:
-            up.image = "up-lit"
-            dancer.image = "dancer-up"
-            clock.schedule(reset_dancer, 0.5)
-        elif move == 1:
-            right.image = "right-lit"
-            dancer.image = "dancer-right"
-            clock.schedule(reset_dancer, 0.5)
-        elif move == 2:
-            down.image = "down-lit"
-            dancer.image = "dancer-down"
-            clock.schedule(reset_dancer, 0.5)
-        elif move == 3:
-            left.image = "left-lit"
-            dancer.image = "dancer-left"
-            clock.schedule(reset_dancer, 0.5)
+        # if move == 0:
+        #     up.image = "up-lit"
+        #     dancer.image = "dancer-up"
+        #     clock.schedule(reset_dancer, 0.5)
+        # elif move == 1:
+        #     right.image = "right-lit"
+        #     dancer.image = "dancer-right"
+        #     clock.schedule(reset_dancer, 0.5)
+        # elif move == 2:
+        #     down.image = "down-lit"
+        #     dancer.image = "dancer-down"
+        #     clock.schedule(reset_dancer, 0.5)
+        # elif move == 3:
+        #     left.image = "left-lit"
+        #     dancer.image = "dancer-left"
+        #     clock.schedule(reset_dancer, 0.5)
+        for i, button in enumerate(buttons):
+            if move != i:
+                continue
+            button.light_up()
+            break
     return
 
 def display_moves():
