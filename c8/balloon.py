@@ -4,11 +4,27 @@ from random import randint
 WIDTH = 800
 HEIGHT = 600
 
+class Enemy(Actor):
+    def __init__(self, image, top_y, bottom_y):
+        super().__init__(image=image)
+        self.top_y = top_y
+        self.bottom_y = bottom_y
+        self.repos()
+    
+    def hitten(self):
+        global balloon
+        if balloon.collidepoint(self.x, self.y) == False:
+            return
+        self.repos()
+        damaged_ballon()
+
+    def repos(self):
+        self.pos = randint(800, 1600), randint(self.top_y, self.bottom_y)
+
 balloon = Actor("balloon")
 balloon.pos = 400, 300
 
-bird = Actor("bird-up")
-bird.pos = randint(800, 1600), randint(10, 200)
+bird = Enemy("bird-up", 10, 200)
 
 house = Actor("house")
 house.pos = randint(800, 1600), 460
@@ -128,17 +144,12 @@ def update():
         game_over = True
         update_high_scores()
 
-    # if balloon.collidepoint(bird.x, bird.y) or \
     if balloon.collidepoint(house.x, house.y) or \
        balloon.collidepoint(tree.x, tree.y):
         game_over = True
         update_high_scores()
-        # damaged_ballon()
 
-    if balloon.collidepoint(bird.x, bird.y):
-        damaged_ballon()
-        bird.x = randint(800, 1600)
-        bird.y = randint(10, 200)
+    bird.hitten()
 
 def damaged_ballon(damage=1):
     global lives, game_over
@@ -150,3 +161,4 @@ def damaged_ballon(damage=1):
     if lives <= 0:
         game_over = True
         update_high_scores()
+
