@@ -16,11 +16,17 @@ dance_length = 4
 # 1. 最初のgenerate_movesでshow_countdownはTrue、say_danceはFalseとされる。
 #   show_countdown中はcountdownが定期発動する。
 show_countdown = True
-# 2. countdownが終わると、show_countdownはFalseとされる。
-#   と同時にdisplay_movesが起動してsay_danceはTrueとされる。
+# 2. countdownが終わると、show_countdownはFalseとされ、say_danceも引き続きFalseとされる。
+#   と同時にdisplay_movesが起動して以降はdisplay_movesが定期発動する。
 say_dance = False
+# 3. display_movesが終わると、say_danceはTrueとされる。
+#   on_key_upでnext_moveを起動していく。
 moves_complete = False
+# 4. next_moveが終わると、moves_completeはTrueとされる。
+#   updateがこのTrueを拾って再びgenerate_moveが呼び出されゲームは繰り返す。
 game_over = False
+# 5. on_key_upで失敗すると、game_overはTrueとされる。
+#   game_overはdrawの分岐を大きくずらすので原則ここでおしまい。
 
 dancer = Actor("dancer-start")
 dancer.pos = CENTRE_X + 5, CENTRE_Y - 40
