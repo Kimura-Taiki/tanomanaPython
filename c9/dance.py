@@ -1,5 +1,12 @@
 from random import randint
 
+# from enum import Enum
+
+# class Color(Enum):
+#     RED = 1
+#     GREEN = 2
+#     BLUE = 3
+
 WIDTH = 800
 HEIGHT = 600
 CENTRE_X = WIDTH / 2
@@ -27,7 +34,6 @@ moves_complete = False
 game_over = False
 # 5. on_key_upで失敗すると、game_overはTrueとされる。
 #   game_overはdrawの分岐を大きくずらすので原則ここでおしまい。
-
 dancer = Actor("dancer-start")
 dancer.pos = CENTRE_X + 5, CENTRE_Y - 40
 
