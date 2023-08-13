@@ -2,7 +2,7 @@ from random import randint
 from pgzero import actor
 import time
 
-from pgzero.actor import ANCHOR_CENTER, POS_TOPLEFT
+# from pgzero.actor import ANCHOR_CENTER, POS_TOPLEFT
 
 WIDTH = 800
 HEIGHT = 600
