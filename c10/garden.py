@@ -192,9 +192,13 @@ def update():
             cow.y -= 5
         elif keyboard.down and cow.y < HEIGHT:
             cow.y += 5
-        if time_elapsed > 15 and not fangflower_list:
-            mutate()
+        # if time_elapsed > 15 and not fangflower_list:
+        #     mutate()
         update_fangflowers()
+
+def start_mutate():
+    clock.schedule(mutate, 15)
 
 add_flowers()
 wilt_flower()
+start_mutate()
