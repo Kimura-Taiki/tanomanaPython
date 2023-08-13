@@ -11,6 +11,8 @@ finalised = False
 garden_happy = True
 fangflower_collision = False
 
+score = 0
+
 time_elapsed = 0
 start_time = time.time()
 
@@ -58,4 +60,14 @@ def reset_cow():
     pass
 
 def update():
-    pass
+    global score, game_over, fangflower_collision
+    global flower_list, fangflower_list, time_elapsed
+    if not game_over:
+        if keyboard.left and cow.x > 0:
+            cow.x -= 5
+        elif keyboard.right and cow.x < WIDTH:
+            cow.x += 5
+        if keyboard.up and cow.y > 0:
+            cow.y -= 5
+        elif keyboard.down and cow.y < HEIGHT:
+            cow.y += 5
