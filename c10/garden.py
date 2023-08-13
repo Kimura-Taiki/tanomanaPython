@@ -1,4 +1,5 @@
 from random import randint
+from pgzero import actor
 import time
 
 WIDTH = 800
@@ -19,10 +20,15 @@ start_time = time.time()
 cow = Actor("cow")
 cow.pos = 100, 500
 flower_list = []
-wilted_list = []
 fangflower_list = []
 fangflower_vx_list = []
 fangflower_vy_list = []
+
+
+class Flower(actor.Actor):
+    def __init__(self, image):
+        super().__init__(image=image)
+        self.wilted_since = "happy"
 
 def draw():
     global game_over, time_elapsed, finalised
@@ -63,11 +69,11 @@ def draw():
     return
 
 def new_flowers():
-    global flower_list, wilted_list
-    flower_new = Actor("flower")
+    global flower_list
+    flower_new = Flower("flower")
     flower_new.pos = randint(50, WIDTH - 50), randint(150, HEIGHT - 100)
+    flower_new.wilted_since = "happy"
     flower_list.append(flower_new)
-    wilted_list.append("happy")
     return
 
 def add_flowers():
@@ -78,36 +84,35 @@ def add_flowers():
     return
 
 def check_wilt_times():
-    global wilted_list, game_over, garden_happy
-    if wilted_list:
-        for wilted_since in wilted_list:
-            if (not wilted_since == "happy"):
-                time_wilted = int(time.time() - wilted_since)
-                if (time_wilted) > 10.0:
-                    garden_happy = False
-                    game_over = True
-                    break
+    global game_over, garden_happy, flower_list
+    for flower in flower_list:
+        if flower.wilted_since == "happy":
+            continue
+        if int(time.time() - flower.wilted_since) > 10.0:
+            garden_happy = False
+            game_over = True
+            break
     return
 
 def wilt_flower():
-    global flower_list, wilted_list, game_over
+    global flower_list, game_over
     if not game_over:
         if flower_list:
             rand_flower = randint(0, len(flower_list) - 1)
             if (flower_list[rand_flower].image == "flower"):
                 flower_list[rand_flower].image = "flower-wilt"
-                wilted_list[rand_flower] = time.time()
+                flower_list[rand_flower].wilted_since = time.time()
         clock.schedule(wilt_flower, 3)
     return
 
 def check_flower_collision():
-    global cow, flower_list, wilted_list
+    global cow, flower_list
     index = 0
     for flower in flower_list:
         if (flower.colliderect(cow) and
             flower.image == "flower-wilt"):
             flower.image = "flower"
-            wilted_list[index] = "happy"
+            flower.wilted_since = "happy"
             break
         index += 1
     return
@@ -132,12 +137,12 @@ def velocity():
 
 def mutate():
     global flower_list, fangflower_list, fangflower_vx_list
-    global fangflower_vy_list, wilted_list, game_over
+    global fangflower_vy_list, game_over
     if not game_over and flower_list:
         rand_flower = randint(0, len(flower_list) - 1)
         fangflower_pos_x = flower_list[rand_flower].x
         fangflower_pos_y = flower_list[rand_flower].y
-        del flower_list[rand_flower], wilted_list[rand_flower]
+        del flower_list[rand_flower]
         fangflower = Actor("fangflower")
         fangflower.pos = fangflower_pos_x, fangflower_pos_y
         fangflower_vx = velocity()
