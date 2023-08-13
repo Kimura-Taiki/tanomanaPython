@@ -2,6 +2,8 @@ from random import randint
 from pgzero import actor
 import time
 
+from pgzero.actor import ANCHOR_CENTER, POS_TOPLEFT
+
 WIDTH = 800
 HEIGHT = 600
 CENTRE_X = WIDTH / 2
@@ -21,14 +23,18 @@ cow = Actor("cow")
 cow.pos = 100, 500
 flower_list = []
 fangflower_list = []
-fangflower_vx_list = []
-fangflower_vy_list = []
 
 
 class Flower(actor.Actor):
     def __init__(self, image):
         super().__init__(image=image)
         self.wilted_since = "happy"
+
+class Fangflower(actor.Actor):
+    def __init__(self, image):
+        super().__init__(image=image)
+        self.vx = 0
+        self.vy = 0
 
 def draw():
     global game_over, time_elapsed, finalised
@@ -136,21 +142,16 @@ def velocity():
         return random_velocity
 
 def mutate():
-    global flower_list, fangflower_list, fangflower_vx_list
-    global fangflower_vy_list, game_over
+    global flower_list, fangflower_list, game_over
     if not game_over and flower_list:
         rand_flower = randint(0, len(flower_list) - 1)
-        fangflower_pos_x = flower_list[rand_flower].x
-        fangflower_pos_y = flower_list[rand_flower].y
-        del flower_list[rand_flower]
-        fangflower = Actor("fangflower")
-        fangflower.pos = fangflower_pos_x, fangflower_pos_y
-        fangflower_vx = velocity()
-        fangflower_vy = velocity()
-        fangflower = fangflower_list.append(fangflower)
-        fangflower_vx_list.append(fangflower_vx)
-        fangflower_vy_list.append(fangflower_vy)
+        fangflower = Fangflower("fangflower")
+        fangflower.pos = flower_list[rand_flower].x, flower_list[rand_flower].y
+        fangflower.vx = velocity()
+        fangflower.vy = velocity()
         clock.schedule(mutate, 20)
+        fangflower = fangflower_list.append(fangflower)
+        del flower_list[rand_flower]
     return
 
 def update_fangflowers():
@@ -158,14 +159,12 @@ def update_fangflowers():
     if not game_over:
         index = 0
         for fangflower in fangflower_list:
-            fangflower_vx = fangflower_vx_list[index]
-            fangflower_vy = fangflower_vy_list[index]
-            fangflower.x += fangflower_vx
-            fangflower.y += fangflower_vy
+            fangflower.x += fangflower.vx
+            fangflower.y += fangflower.vy
             if (fangflower.left < 0) or (fangflower.right > WIDTH):
-                fangflower_vx_list[index] = -fangflower_vx
+                fangflower.vx *= -1
             if (fangflower.top < 150) or (fangflower.bottom > HEIGHT):
-                fangflower_vy_list[index] = -fangflower_vy
+                fangflower.vy *= -1
             index += 1
     return
 
