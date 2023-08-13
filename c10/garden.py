@@ -2,6 +2,8 @@ from random import randint
 from pgzero import actor
 import time
 
+from pgzero.actor import ANCHOR_CENTER, POS_TOPLEFT
+
 # from pgzero.actor import ANCHOR_CENTER, POS_TOPLEFT
 
 WIDTH = 800
@@ -12,7 +14,6 @@ CENTRE_Y = HEIGHT / 2
 game_over = False
 finalised = False
 garden_happy = True
-fangflower_collision = False
 
 score = 0
 
@@ -35,6 +36,21 @@ class Fangflower(actor.Actor):
         super().__init__(image=image)
         self.vx = 0
         self.vy = 0
+    
+    def mutate_flower(flower):
+        global flower_list
+        fangflower = Fangflower("fangflower")
+        fangflower.pos = flower.x, flower.y
+        fangflower.vx = Fangflower.velocity()
+        fangflower.vy = Fangflower.velocity()
+        return fangflower
+
+    def velocity():
+        random_velocity = randint(2, 3)
+        if randint(0, 1) == 0:
+            return -random_velocity
+        else:
+            return random_velocity
 
 def draw():
     global game_over, time_elapsed, finalised
@@ -124,8 +140,10 @@ def check_flower_collision():
     return
 
 def check_fangflower_collision():
-    global cow, fangflower_list, fangflower_collision
+    global cow, fangflower_list
     global game_over
+    if not fangflower_list:
+        return
     for fangflower in fangflower_list:
         if fangflower.colliderect(cow):
             cow.image = "zap"
@@ -133,25 +151,13 @@ def check_fangflower_collision():
             break
     return
 
-def velocity():
-    random_dir = randint(0, 1)
-    random_velocity = randint(2, 3)
-    if random_dir == 0:
-        return -random_velocity
-    else:
-        return random_velocity
-
 def mutate():
     global flower_list, fangflower_list, game_over
     if not game_over and flower_list:
         rand_flower = randint(0, len(flower_list) - 1)
-        fangflower = Fangflower("fangflower")
-        fangflower.pos = flower_list[rand_flower].x, flower_list[rand_flower].y
-        fangflower.vx = velocity()
-        fangflower.vy = velocity()
-        clock.schedule(mutate, 20)
-        fangflower = fangflower_list.append(fangflower)
+        fangflower_list.append(Fangflower.mutate_flower(flower=flower_list[rand_flower]))
         del flower_list[rand_flower]
+        clock.schedule(mutate, 20)
     return
 
 def update_fangflowers():
@@ -175,11 +181,11 @@ def reset_cow():
     return
 
 def update():
-    global score, game_over, fangflower_collision
+    global score, game_over
     global flower_list, fangflower_list, time_elapsed
-    fangflower_collision = check_fangflower_collision()
-    check_wilt_times()
     if not game_over:
+        check_fangflower_collision()
+        check_wilt_times()
         if keyboard.space:
             cow.image = "cow-water"
             clock.schedule(reset_cow, 0.5)
@@ -194,9 +200,9 @@ def update():
             cow.y += 5
         update_fangflowers()
 
-def start_mutate():
-    clock.schedule(mutate, 5)
+def start_mutate(time):
+    clock.schedule(mutate, time)
 
 add_flowers()
 wilt_flower()
-start_mutate()
+start_mutate(1)
