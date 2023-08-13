@@ -42,10 +42,19 @@ def draw():
         )
 
 def new_flowers():
-    pass
+    global flower_list, wilted_list
+    flower_new = Actor("flower")
+    flower_new.pos = randint(50, WIDTH - 50), randint(150, HEIGHT - 100)
+    flower_list.append(flower_new)
+    wilted_list.append("happy")
+    return
 
 def add_flowers():
-    pass
+    global game_over
+    if not game_over:
+        new_flowers()
+        clock.schedule(add_flowers, 4)
+    return
 
 def check_with_times():
     pass
@@ -71,3 +80,5 @@ def update():
             cow.y -= 5
         elif keyboard.down and cow.y < HEIGHT:
             cow.y += 5
+
+add_flowers()
