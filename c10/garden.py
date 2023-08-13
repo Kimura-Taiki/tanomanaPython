@@ -157,13 +157,9 @@ def update_fangflowers():
             fangflower_vy = fangflower_vy_list[index]
             fangflower.x += fangflower_vx
             fangflower.y += fangflower_vy
-            if fangflower.left < 0:
+            if (fangflower.left < 0) or (fangflower.right > WIDTH):
                 fangflower_vx_list[index] = -fangflower_vx
-            if fangflower.right > WIDTH:
-                fangflower_vx_list[index] = -fangflower_vx
-            if fangflower.top < 150:
-                fangflower_vy_list[index] = -fangflower_vy
-            if fangflower.bottom > HEIGHT:
+            if (fangflower.top < 150) or (fangflower.bottom > HEIGHT):
                 fangflower_vy_list[index] = -fangflower_vy
             index += 1
     return
@@ -192,12 +188,10 @@ def update():
             cow.y -= 5
         elif keyboard.down and cow.y < HEIGHT:
             cow.y += 5
-        # if time_elapsed > 15 and not fangflower_list:
-        #     mutate()
         update_fangflowers()
 
 def start_mutate():
-    clock.schedule(mutate, 15)
+    clock.schedule(mutate, 5)
 
 add_flowers()
 wilt_flower()
