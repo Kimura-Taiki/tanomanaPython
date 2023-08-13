@@ -14,6 +14,7 @@ CENTRE_Y = HEIGHT / 2
 game_over = False
 finalised = False
 garden_happy = True
+raining = True
 
 score = 0
 
@@ -29,6 +30,10 @@ fangflower_list = []
 class Flower(actor.Actor):
     def __init__(self, image):
         super().__init__(image=image)
+        self.wilted_since = "happy"
+
+    def water(self):
+        self.image = "flower"
         self.wilted_since = "happy"
 
 class Fangflower(actor.Actor):
@@ -55,7 +60,10 @@ def draw():
     global game_over, time_elapsed, finalised
     if not game_over:
         screen.clear()
-        screen.blit("garden", (0, 0))
+        if not raining:
+            screen.blit("garden", (0, 0))
+        else:
+            screen.blit("garden-raining", (0, 0))
         cow.draw()
         for flower in flower_list:
             flower.draw()
@@ -132,8 +140,7 @@ def check_flower_collision():
     for flower in flower_list:
         if (flower.colliderect(cow) and
             flower.image == "flower-wilt"):
-            flower.image = "flower"
-            flower.wilted_since = "happy"
+            flower.water()
             break
         index += 1
     return
@@ -204,4 +211,4 @@ def start_mutate(time):
 
 add_flowers()
 wilt_flower()
-start_mutate(1)
+start_mutate(15)
