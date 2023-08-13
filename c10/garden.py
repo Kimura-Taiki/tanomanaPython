@@ -38,7 +38,6 @@ class Fangflower(actor.Actor):
         self.vy = 0
     
     def mutate_flower(flower):
-        global flower_list
         fangflower = Fangflower("fangflower")
         fangflower.pos = flower.x, flower.y
         fangflower.vx = Fangflower.velocity()
