@@ -33,7 +33,7 @@ easy_lair = {
 
 medium_lair = {
     "dragon": Actor("dragon-asleep", pos=(600, 300)),
-    "eggs": Actor("one-egg", pos=(400, 300)),
+    "eggs": Actor("two-eggs", pos=(400, 300)),
     "egg_count": 2,
     "egg_hidden": False,
     "egg_hide_counter": 0,
@@ -44,7 +44,7 @@ medium_lair = {
 
 hard_lair = {
     "dragon": Actor("dragon-asleep", pos=(600, 500)),
-    "eggs": Actor("one-egg", pos=(400, 500)),
+    "eggs": Actor("three-eggs", pos=(400, 500)),
     "egg_count": 3,
     "egg_hidden": False,
     "egg_hide_counter": 0,
@@ -106,5 +106,70 @@ def update():
             hero.y = 0
     check_for_collisions()
 
+def update_lairs():
+    global lairs, hero, lives
+    for lair in lairs:
+        if lair["dragon"].image == "dragon-asleep":
+            update_sleeping_dragon(lair)
+        elif lair["dragon"].image == "dragon-awake":
+            update_waking_dragon(lair)
+        update_egg(lair)
+
+clock.schedule_interval(update_lairs, 1)
+
+def update_sleeping_dragon(lair):
+    if lair["sleep_counter"] >= lair["sleep_length"]:
+        lair["dragon"].image = "dragon-awake"
+        lair["sleep_counter"] = 0
+    else:
+        lair["sleep_counter"] += 1
+
+def update_waking_dragon(lair):
+    if lair["wake_counter"] >= DRAGON_WAKE_TIME:
+        lair["dragon"].image = "dragon-asleep"
+        lair["wake_counter"] = 0
+    else:
+        lair["wake_counter"] += 1
+
+def update_egg(lair):
+    if lair["egg_hidden"] is True:
+        if lair["egg_hide_counter"] >= EGG_HIDE_TIME:
+            lair["egg_hidden"] = False
+            lair["egg_hide_counter"] = 0
+        else:
+            lair["egg_hide_counter"] += 1
+
 def check_for_collisions():
-    pass
+    global lairs, eggs_collected, reset_required, game_complete
+    for lair in lairs:
+        if lair["egg_hidden"] is False:
+            check_for_egg_collision(lair)
+        if lair["dragon"].image == "dragon-awake" and reset_required is False:
+            check_for_dragon_collision(lair)
+
+def check_for_dragon_collision(lair):
+    x_distance = hero.x - lair["dragon"].x
+    y_distance = hero.y - lair["dragon"].y
+    distance = math.hypot(x_distance, y_distance)
+    if distance < ATTACK_DISTANCE:
+        handle_dragon_collision()
+
+def handle_dragon_collision():
+    global reset_required
+    reset_required = True
+    animate(hero, pos=HERO_START, on_finished=subtract_life)
+
+def check_for_egg_collision(lair):
+    global eggs_collected, game_complete
+    if hero.colliderect(lair["eggs"]):
+        lair["egg_hidden"] = True
+        eggs_collected += lair["egg_count"]
+        if eggs_collected >= EGG_TARGET:
+            game_complete = True
+
+def subtract_life():
+    global lives, reset_required, game_over
+    lives -= 1
+    if lives == 0:
+        game_over = True
+    reset_required = False
